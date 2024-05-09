@@ -1,22 +1,126 @@
-<!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Título de la página</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-        
-    </style>
+    <title>Comparación de Regiones</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    
-    <h1>Hola, mundo!</h1>
-    <p>plantilla de pagina basica.</p>
-    
+    <h1>Comparación de Regiones</h1>
+    <select id="region1">
+        <option value="Amazonas">Amazonas</option>
+        <option value="Ancash">Ancash</option>
+        <option value="Apurimac">Apurimac</option>
+        <option value="Tumbes">Tumbes</option>
+        <option value="Piura">Piura</option>
+        <option value="Lambayeque">Lambayeque</option>
+        <option value="La Libertad">La Libertad</option>
+        <option value="Cajamarca">Cajamarca</option>
+        <option value="Ica">Ica</option>
+        <option value="Arequipa">Arequipa</option>
+        <option value="Moquegua">Moquegua</option>
+        <option value="Tacna">Tacna</option>
+        <option value="Loreto">Loreto</option>
+        <option value="San Martin">San Martin</option>
+        <option value="Huanuco">Huanuco</option>
+        <option value="Pasco">Pasco</option>
+        <option value="Ucayali">Ucayali</option>
+        <option value="Huancayo">Huancayo</option>
+        <option value="Huancavelica">Huancavelica</option>
+        <option value="Ayacucho">Ayacucho</option>
+        <option value="Avancay">Avancay</option>
+        <option value="Cusco">Cusco</option>
+        <option value="Puno">Puno</option>
+        <option value="Madre de Dios">Madre de Dios</option>
+    </select>
+    <select id="region2">
+        <option value="Amazonas">Amazonas</option>
+        <option value="Ancash">Ancash</option>
+        <option value="Apurimac">Apurimac</option>
+        <option value="Tumbes">Tumbes</option>
+        <option value="Piura">Piura</option>
+        <option value="Lambayeque">Lambayeque</option>
+        <option value="La Libertad">La Libertad</option>
+        <option value="Cajamarca">Cajamarca</option>
+        <option value="Ica">Ica</option>
+        <option value="Arequipa">Arequipa</option>
+        <option value="Moquegua">Moquegua</option>
+        <option value="Tacna">Tacna</option>
+        <option value="Loreto">Loreto</option>
+        <option value="San Martin">San Martin</option>
+        <option value="Huanuco">Huanuco</option>
+        <option value="Pasco">Pasco</option>
+        <option value="Ucayali">Ucayali</option>
+        <option value="Huancayo">Huancayo</option>
+        <option value="Huancavelica">Huancavelica</option>
+        <option value="Ayacucho">Ayacucho</option>
+        <option value="Avancay">Avancay</option>
+        <option value="Cusco">Cusco</option>
+        <option value="Puno">Puno</option>
+        <option value="Madre de Dios">Madre de Dios</option>
+    </select>
+    <button onclick="obtenerDatos()">Comparar</button>
+    <button onclick="regresar()">Regresar</button>
+    <div id="grafico">
+        <canvas id="graficoComparativo"></canvas>
+    </div>
+
+    <script>
+        function obtenerDatos() {
+            var region1 = document.getElementById("region1").value;
+            var region2 = document.getElementById("region2").value;
+            // Realizamos la petición Ajax para cargar los datos
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "data.json", true);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    var datos = JSON.parse(xhr.responseText);
+                    console.log(datos);
+                    mostrarGrafico(datos, region1, region2);
+                }
+            };
+            xhr.send();
+        }
+
+        function mostrarGrafico(datos, region1, region2) {
+            // Preparamos los datos para el gráfico
+            var etiquetas = datos[0].confirmed.map(dato => dato.date);
+            var datosRegion1 = datos.find(dato => dato.region === region1).confirmed.map(dato => parseInt(dato.value));
+            var datosRegion2 = datos.find(dato => dato.region === region2).confirmed.map(dato => parseInt(dato.value));
+
+            var ctx = document.getElementById("graficoComparativo").getContext("2d");
+            var grafico = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: etiquetas,
+                    datasets: [
+                        {
+                            label: region1,
+                            data: datosRegion1,
+                            borderColor: 'blue',
+                            backgroundColor: 'rgba(0, 0, 255, 0.1)'
+                        },
+                        {
+                            label: region2,
+                            data: datosRegion2,
+                            borderColor: 'red',
+                            backgroundColor: 'rgba(255, 0, 0, 0.1)'
+                        }
+                    ]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function regresar() {
+            window.location.reload();
+        }
+    </script>
 </body>
 </html>
